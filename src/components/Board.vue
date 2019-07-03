@@ -63,6 +63,10 @@ export default {
           });
         }
       }
+    },
+
+    reset() {
+      this.initSquares();
     }
   }
 };

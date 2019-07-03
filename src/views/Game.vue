@@ -1,12 +1,13 @@
 <template>
   <div class="row flex-fill d-flex justify-content-start overflow-auto pt-3">
     <Board
+      ref="board"
       @playerTakeTurn="handlePlayerTakeTurn"
       @checkEndGame="handleCheckEndGame"
       :xIsNext="xIsNext"
       :winner="winner"
     />
-    <GameInfo :xIsNext="xIsNext" :winner="winner" />
+    <GameInfo @restartGame="handleRestart" :xIsNext="xIsNext" :winner="winner" />
   </div>
 </template>
 
@@ -39,6 +40,12 @@ export default {
         let { currCoordinate } = params;
         this.winner = squares[currCoordinate.x][currCoordinate.y];
       }
+    },
+
+    handleRestart() {
+      this.winner = null;
+      this.xIsNext = true;
+      this.$refs.board.reset();
     }
   }
 };
