@@ -1,13 +1,13 @@
-export function checkEndGame({ squares, currCoordinate }) {
+export function haveWinner({ squares, currCoordinate }) {
   return (
-    fiveInARow(squares, currCoordinate) ||
-    fiveInAColumn(squares, currCoordinate) ||
-    fiveInPrimaryDiagonal(squares, currCoordinate) ||
-    fiveInSubDiagonal(squares, currCoordinate)
+    checkFiveInARow(squares, currCoordinate) ||
+    checkFiveInAColumn(squares, currCoordinate) ||
+    checkFiveInPrimaryDiagonal(squares, currCoordinate) ||
+    checkFiveInSubDiagonal(squares, currCoordinate)
   );
 }
 
-function fiveInARow(squares, { x, y }) {
+function checkFiveInARow(squares, { x, y }) {
   let currCell = squares[x][y];
 
   let countToLeft = 0;
@@ -33,7 +33,7 @@ function fiveInARow(squares, { x, y }) {
   return countToLeft + countToRight === 5;
 }
 
-function fiveInAColumn(squares, { x, y }) {
+function checkFiveInAColumn(squares, { x, y }) {
   let currCell = squares[x][y];
 
   let countUp = 0;
@@ -59,7 +59,7 @@ function fiveInAColumn(squares, { x, y }) {
   return countUp + countDown === 5;
 }
 
-function fiveInPrimaryDiagonal(squares, { x, y }) {
+function checkFiveInPrimaryDiagonal(squares, { x, y }) {
   let currCell = squares[x][y];
 
   let countUp = 0;
@@ -84,7 +84,7 @@ function fiveInPrimaryDiagonal(squares, { x, y }) {
   return countUp + countDown === 5;
 }
 
-function fiveInSubDiagonal(squares, { x, y }) {
+function checkFiveInSubDiagonal(squares, { x, y }) {
   let currCell = squares[x][y];
 
   let countUp = 0;

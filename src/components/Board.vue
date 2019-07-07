@@ -50,18 +50,22 @@ export default {
 
     handleSquareClicked(x, y) {
       if (!this.winner) {
-        let updatedRow = this.squares[x].slice(0);
+        this.$socket.emit("playerTakeTurn", { x, y });
+      }
+    },
 
-        if (this.squares[x][y] == null) {
-          updatedRow[y] = this.xIsNext ? "X" : "O";
-          this.$set(this.squares, x, updatedRow);
+    drawChess(coordinate) {
+      let { x, y } = coordinate;
+      let updatedRow = this.squares[x].slice(0);
 
-          this.$emit("playerTakeTurn");
-          this.$emit("checkEndGame", {
-            squares: this.squares,
-            currCoordinate: { x, y }
-          });
-        }
+      if (this.squares[x][y] == null) {
+        updatedRow[y] = this.xIsNext ? "X" : "O";
+        this.$set(this.squares, x, updatedRow);
+
+        this.$emit("checkEndGame", {
+          squares: this.squares,
+          currCoordinate: { x, y }
+        });
       }
     },
 

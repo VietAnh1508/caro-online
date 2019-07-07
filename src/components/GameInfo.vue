@@ -4,8 +4,8 @@
     <div v-if="winner == null" class="status">Next player: {{ xIsNext ? 'X' : 'O' }}</div>
     <div v-else>
       Winner: {{ winner }}
-      <button type="button" @click="restartGame">Restart</button>
-      </div>
+      <button type="button" @click="newGame">New game</button>
+    </div>
   </div>
 </template>
 
@@ -19,9 +19,10 @@ export default {
       type: String
     }
   },
+
   methods: {
-    restartGame() {
-      this.$emit('restartGame');
+    newGame() {
+      this.$socket.emit("newGame", this.xIsNext);
     }
   }
 };

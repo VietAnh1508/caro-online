@@ -1,20 +1,14 @@
 <template>
   <div class="row flex-fill d-flex justify-content-start overflow-auto pt-3">
-    <Board
-      ref="board"
-      @playerTakeTurn="handlePlayerTakeTurn"
-      @checkEndGame="handleCheckEndGame"
-      :xIsNext="xIsNext"
-      :winner="winner"
-    />
-    <GameInfo @restartGame="handleRestart" :xIsNext="xIsNext" :winner="winner" />
+    <Board ref="board" @checkEndGame="handleCheckEndGame" :xIsNext="xIsNext" :winner="winner" />
+    <GameInfo :xIsNext="xIsNext" :winner="winner" />
   </div>
 </template>
 
 <script>
 import Board from "@/components/Board";
 import GameInfo from "@/components/GameInfo";
-import { checkEndGame } from "@/util/calculate-winner";
+import { haveWinner } from "@/util/find-winner";
 
 export default {
   components: {
@@ -30,21 +24,24 @@ export default {
   },
 
   methods: {
-    handlePlayerTakeTurn() {
-      this.xIsNext = !this.xIsNext;
-    },
-
     handleCheckEndGame(params) {
-      if (checkEndGame(params)) {
+      if (haveWinner(params)) {
         let { squares } = params;
         let { currCoordinate } = params;
         this.winner = squares[currCoordinate.x][currCoordinate.y];
       }
+    }
+  },
+
+  sockets: {
+    playerTakeTurn(data) {
+      this.xIsNext = data.xIsNext;
+      this.$refs.board.drawChess(data.coordinate);
     },
 
-    handleRestart() {
+    newGame(xIsNext) {
       this.winner = null;
-      this.xIsNext = true;
+      this.xIsNext = xIsNext;
       this.$refs.board.reset();
     }
   }
