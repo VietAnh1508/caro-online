@@ -6,6 +6,8 @@
       Winner: {{ winner }}
       <button type="button" @click="newGame">New game</button>
     </div>
+    <span>Username: {{ username }}</span>
+    <button type="button" @click="logout">Logout</button>
   </div>
 </template>
 
@@ -20,9 +22,26 @@ export default {
     }
   },
 
+  data() {
+    return {
+      username: ""
+    };
+  },
+
+  created() {
+    this.username = localStorage.getItem("username");
+  },
+
   methods: {
     newGame() {
       this.$socket.emit("newGame", this.xIsNext);
+    },
+
+    logout() {
+      this.$socket.emit("logout", { id: localStorage.getItem("id") }, () => {
+        localStorage.clear();
+        this.$router.replace({ name: "login" });
+      });
     }
   }
 };
