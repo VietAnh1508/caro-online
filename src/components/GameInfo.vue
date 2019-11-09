@@ -1,12 +1,15 @@
 <template>
   <div class="col-3 game-info">
     <h2>Game info</h2>
+    <div>Room: {{ room }}</div>
     <div v-if="winner == null" class="status">Next player: {{ xIsNext ? 'X' : 'O' }}</div>
     <div v-else>
       Winner: {{ winner }}
       <button type="button" @click="newGame">New game</button>
     </div>
-    <span>Username: {{ username }}</span>
+    <div>
+      <span>Username: {{ username }}</span>
+    </div>
     <button type="button" @click="logout">Logout</button>
   </div>
 </template>
@@ -24,12 +27,14 @@ export default {
 
   data() {
     return {
-      username: ""
+      username: "",
+      room: ""
     };
   },
 
   created() {
     this.username = localStorage.getItem("username");
+    this.room = localStorage.getItem("room");
   },
 
   methods: {

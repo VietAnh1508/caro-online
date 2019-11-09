@@ -9,8 +9,24 @@
           <label>Display name</label>
           <input type="text" v-model="username" autofocus autocomplete="off" />
         </div>
+        <div class="form-field">
+          <label>Choose room</label>
+          <select id="room-list" v-model="selectedRoom">
+            <option disabled>-- Pick a room --</option>
+            <option v-for="room in roomList" :key="room" :value="room">{{ room }}</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Room name</label>
+          <input
+            type="text"
+            v-model="newRoom"
+            autocomplete="off"
+            placeholder="Enter a name to create a new room"
+          />
+        </div>
         <div v-if="validateErr !== null">
-          <span>{{ validateErr }}</span>
+          <span class="errorMsg">{{ validateErr }}</span>
         </div>
         <div class="form-field">
           <button @click="login">Join</button>
@@ -25,37 +41,60 @@ export default {
   data() {
     return {
       username: "",
+      roomList: [],
+      selectedRoom: null,
+      newRoom: "",
       validateErr: null
     };
   },
 
   methods: {
     login() {
-      if (!this.username) {
-        this.validateErr = "Username is required!";
-      } else {
-        try {
-          this.$socket.emit(
-            "newUserJoin",
-            {
-              username: this.username,
-              room: "test"
-            },
-            data => {
-              if (data.status === 'error') {
-                this.validateErr = data.payload.msg;
-              } else {
-                this.validateErr = null;
-                localStorage.setItem('id', data.payload.id);
-                localStorage.setItem("username", this.username);
-                this.$router.replace({ name: "game" });
-              }
-            }
-          );
-        } catch (err) {
-          alert(err);
-        }
+      this.validateErr = this.validateData();
+      if (this.validateErr) {
+        return;
       }
+
+      try {
+        this.$socket.emit(
+          "newUserJoin",
+          {
+            username: this.username,
+            room: this.selectedRoom || this.newRoom
+          },
+          data => {
+            if (data.status === "error") {
+              this.validateErr = data.payload.msg;
+            } else {
+              this.validateErr = null;
+              localStorage.setItem("id", data.payload.id);
+              localStorage.setItem("username", this.username);
+              localStorage.setItem("room", this.selectedRoom || this.newRoom);
+              this.$router.replace({ name: "game" });
+            }
+          }
+        );
+      } catch (err) {
+        alert(err);
+      }
+    },
+
+    validateData() {
+      if (!this.username) {
+        return "Username is required!";
+      }
+
+      if (!this.selectedRoom && !this.newRoom) {
+        return "Please pick a room or create a new one!";
+      }
+    }
+  },
+
+  sockets: {
+    showRoomList(roomList) {
+      roomList.forEach(room => {
+        this.roomList.push(room);
+      });
     }
   }
 };
@@ -155,5 +194,10 @@ button:disabled {
 .form-field select {
   border: 1px solid #e1e1e1;
   padding: 10px;
+}
+
+.errorMsg {
+  color: red;
+  font-size: 13px;
 }
 </style>
